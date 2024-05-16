@@ -1,14 +1,11 @@
 <br />
 
 <div align="center">
-  <h1>Backend</h1>>
+  <h1>Backend Project - Coderhouse</h1>
    <br/>
-   <br/>
-  <br/>
   <div>
     <img height="30px" alt="Express" src="https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB" />
   </div>
-    <br/>
     <br/>
 </div>
 
