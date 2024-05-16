@@ -1,10 +1,10 @@
 import { request, response } from "express";
-import { products } from "../routes/products.routes";
+import products from "../data/products.json" assert { type: "json" };
 
-export const checkProductDelete = (req = request, res = response, next) => {
+export const checkProductExists = (req = request, res = response, next) => {
   const { id } = req.params;
 
-  const findProduct = products.map((i) => i.id == id);
+  const findProduct = products.find((i) => i.id == id);
 
   if (!findProduct) {
     return res.status(400).json({

@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { checkProductPut } from "../middleware/checkProductPut.middleware";
-import { checkProductPost } from "../middleware/checkProductPost.middleware";
-import { checkProductDelete } from "../middleware/checkProductDelete.middleware";
-import { checkProductGet } from "../middleware/checkProductGet.middleware";
-import products from "../data/products.json";
+import products from "../data/products.json" assert { type: "json" };
+// middlewares
+import { checkProductPut } from "../middleware/checkProductPut.middleware.js";
+import { checkProductPost } from "../middleware/checkProductPost.middleware.js";
+import { checkProductExists } from "../middleware/checkProductExists.middleware.js";
 
 const router = Router();
 
@@ -15,10 +15,10 @@ router.get("/", (req, res) => {
   res.status(200).json({ status: "success", payload: productToSend });
 });
 
-router.get("/:id", checkProductGet, (req, res) => {
+router.get("/:id", checkProductExists, (req, res) => {
   const { id } = req.params;
 
-  const findProduct = products.map((i) => i.id == id);
+  const findProduct = products.find((i) => i.id == id);
 
   res.status(200).json({ status: "success", payload: findProduct });
 });
@@ -36,7 +36,7 @@ router.post("/", checkProductPost, (req, res) => {
   res.status(200).json({ status: "success", payload: products });
 });
 
-router.put("/:id", checkProductPut, (req, res) => {
+router.put("/:id", checkProductExists, checkProductPut, (req, res) => {
   const { id } = req.params;
   const productData = req.body;
 
@@ -52,7 +52,7 @@ router.put("/:id", checkProductPut, (req, res) => {
     .json({ status: "success", payload: "Producto editado con éxito" });
 });
 
-router.delete("/:id", checkProductDelete, (req, res) => {
+router.delete("/:id", checkProductExists, (req, res) => {
   const { id } = req.params;
 
   let findProduct = products.find((i) => i.id == id);
