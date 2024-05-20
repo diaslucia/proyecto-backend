@@ -39,6 +39,7 @@ Steps to install and run the project:
 
 The file structure is:
 
-- middleware: to store middleware used in routes.
+- middleware: to store middleware used in routes to verify requests.
 - routes: to store all different routes for endpoints.
 - data: to store jsons with information.
+- utils: to store reusable functions and helpers.
