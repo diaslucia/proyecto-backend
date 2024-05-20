@@ -1,10 +1,11 @@
 import { request, response } from "express";
-import products from "../data/products.json" assert { type: "json" };
+import { findFile, findById } from "../utils/helpers.js";
 
 export const checkProductExists = (req = request, res = response, next) => {
   const { id } = req.params;
 
-  const findProduct = products.find((i) => i.id == id);
+  const products = findFile("products");
+  const findProduct = findById(products, id);
 
   if (!findProduct) {
     return res.status(400).json({

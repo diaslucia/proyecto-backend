@@ -1,15 +1,21 @@
 import { Router } from "express";
-import cart from "../data/products.json" assert { type: "json" };
+import { findFile, findById, writeFile } from "../utils/helpers.js";
+import fs from "fs";
+import __dirname from "../dirname.js";
+
 // middlewares
 import { checkCartPost } from "../middleware/checkCartPost.middleware.js";
 import { checkCartExists } from "../middleware/checkCartExists.middleware.js";
+import { generateUniqueId } from "../utils/generateUniqueId.js";
 
 const router = Router();
+fs.writeFileSync(`${__dirname}/data/cart.json`);
+const cart = findFile("cart");
 
-router.get("/:id", checkCartExists, (req, res) => {
-  const { id } = req.params;
+router.get("/:cId", checkCartExists, (req, res) => {
+  const { cId } = req.params;
 
-  const findCart = cart.find((i) => i.id == id);
+  const findCart = findById(cart, cId);
 
   res.status(200).json({ status: "success", payload: findCart });
 });
@@ -17,15 +23,26 @@ router.get("/:id", checkCartExists, (req, res) => {
 router.post("/", checkCartPost, (req, res) => {
   const newCart = req.body;
 
-  cart.push(newCart);
+  const newToPost = [
+    ...cart,
+    {
+      ...newCart,
+      id: generateUniqueId(),
+    },
+  ];
+  writeFile("cart", newToPost);
 
-  res.status(200).json({ status: "success", payload: newCart });
+  res.status(200).json({
+    status: "success",
+    message: "Cart added successfully",
+    payload: newToPost,
+  });
 });
 
 router.post("/:cId/product/:pId", checkCartExists, (req, res) => {
-  const { cId, pId } = req.body;
+  const { cId, pId } = req.params;
 
-  const findCart = cart.find((i) => i.id == cId);
+  const findCart = findById(cart, cId);
   const findProductIndex = findCart.products.findIndex((i) => i.id == pId);
 
   if (findProductIndex !== -1) {
@@ -33,8 +50,13 @@ router.post("/:cId/product/:pId", checkCartExists, (req, res) => {
   } else {
     findCart.products.push({ id: pId, quantity: 1 });
   }
+  writeFile("cart", [findCart]);
 
-  res.status(200).json({ status: "success", payload: newCart });
+  res.status(200).json({
+    status: "success",
+    message: "Product added successfully",
+    payload: findCart,
+  });
 });
 
 export default router;

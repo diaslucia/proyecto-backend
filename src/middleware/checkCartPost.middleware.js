@@ -1,12 +1,9 @@
 import { request, response } from "express";
 
 export const checkCartPost = (req = request, res = response, next) => {
-  const { id, products } = req.body;
+  const { products } = req.body;
   const errors = [];
 
-  if (!id) {
-    errors.push("El campo 'id' es obligatorio.");
-  }
   if (!products) {
     errors.push("El campo 'products' es obligatorio.");
   }

@@ -1,11 +1,18 @@
 import { Router } from "express";
-import products from "../data/products.json" assert { type: "json" };
+import {
+  findFile,
+  findById,
+  writeFile,
+  findByIndex,
+} from "../utils/helpers.js";
 // middlewares
 import { checkProductPut } from "../middleware/checkProductPut.middleware.js";
 import { checkProductPost } from "../middleware/checkProductPost.middleware.js";
 import { checkProductExists } from "../middleware/checkProductExists.middleware.js";
+import { generateUniqueId } from "../utils/generateUniqueId.js";
 
 const router = Router();
+const products = findFile("products");
 
 router.get("/", (req, res) => {
   const { limit } = req.query;
@@ -18,7 +25,7 @@ router.get("/", (req, res) => {
 router.get("/:id", checkProductExists, (req, res) => {
   const { id } = req.params;
 
-  const findProduct = products.find((i) => i.id == id);
+  const findProduct = findById(products, id);
 
   res.status(200).json({ status: "success", payload: findProduct });
 });
@@ -26,42 +33,48 @@ router.get("/:id", checkProductExists, (req, res) => {
 router.post("/", checkProductPost, (req, res) => {
   const product = req.body;
 
-  // Preguntar acá por consigna
-  if (product.status) {
-    products.push(product);
-  } else {
-    products.push({ ...product, status: true });
-  }
+  // Status es true por default
+  const newProducts = [
+    ...products,
+    { ...product, status: product.status || true, id: generateUniqueId() },
+  ];
 
-  res.status(200).json({ status: "success", payload: products });
+  writeFile("products", newProducts);
+
+  res.status(200).json({
+    status: "success",
+    message: "Product added successfully",
+    payload: newProducts,
+  });
 });
 
 router.put("/:id", checkProductExists, checkProductPut, (req, res) => {
   const { id } = req.params;
   const productData = req.body;
 
-  let productIndex = products.indexOf((i) => i.id == id);
-
-  products[productIndex] = {
-    ...products[productIndex],
+  const productIndex = findByIndex(products, id);
+  const newProducts = products;
+  newProducts[productIndex] = {
+    ...newProducts[productIndex],
     ...productData,
   };
+  writeFile("products", newProducts);
 
   res
     .status(200)
-    .json({ status: "success", payload: "Producto editado con éxito" });
+    .json({ status: "success", message: "Product edited successfully" });
 });
 
 router.delete("/:id", checkProductExists, (req, res) => {
   const { id } = req.params;
 
-  let findProduct = products.find((i) => i.id == id);
-
-  products = products.filter((i) => i.id != findProduct.id);
+  const findProduct = findById(products, id);
+  const newProducts = products.filter((i) => i.id != findProduct.id);
+  writeFile("products", newProducts);
 
   res
     .status(200)
-    .json({ status: "success", payload: "Producto eliminado con éxito" });
+    .json({ status: "success", message: "Product deleted successfully" });
 });
 
 export default router;
