@@ -2,7 +2,7 @@ import fs from "fs";
 import __dirname from "../dirname.js";
 
 export const findFile = (path) => {
-  const data = fs.readFileSync(`${__dirname}/data/${path}.json`, "utf-8");
+  const data = fs.readFileSync(`${__dirname}/db/${path}.json`, "utf-8");
   const item = JSON.parse(data);
   return item;
 };
@@ -16,5 +16,5 @@ export const findByIndex = (data, idToFind) => {
 };
 
 export const writeFile = (path, item) => {
-  fs.writeFileSync(`${__dirname}/data/${path}.json`, JSON.stringify(item));
+  fs.writeFileSync(`${__dirname}/db/${path}.json`, JSON.stringify(item));
 };

@@ -1,7 +1,5 @@
 import { Router } from "express";
 import { findFile, findById, writeFile } from "../utils/helpers.js";
-import fs from "fs";
-import __dirname from "../dirname.js";
 
 // middlewares
 import { checkCartPost } from "../middleware/checkCartPost.middleware.js";
@@ -9,7 +7,6 @@ import { checkCartExists } from "../middleware/checkCartExists.middleware.js";
 import { generateUniqueId } from "../utils/generateUniqueId.js";
 
 const router = Router();
-fs.writeFileSync(`${__dirname}/data/cart.json`);
 const cart = findFile("cart");
 
 router.get("/:cId", checkCartExists, (req, res) => {

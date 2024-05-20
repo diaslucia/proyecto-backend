@@ -1,1 +1,11 @@
-[{"id":"id-1716169722908-548","description":"Vinagre","code":"VINE","price":53,"status":true,"stock":2,"category":"Alacena"}]
+[
+  {
+    "id": "id-1716169722908-548",
+    "description": "Vinagre",
+    "code": "VIN",
+    "price": 53,
+    "status": true,
+    "stock": 2,
+    "category": "Alacena"
+  }
+]
