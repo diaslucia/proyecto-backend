@@ -1,0 +1,28 @@
+<section>
+  <div class="form_container">
+    <form id="addForm">
+      <h2 class="title">Add products</h2>
+      <input id="title" type="text" name="title" placeholder="Product Title" />
+      <input
+        id="description"
+        type="text"
+        name="description"
+        placeholder="Product Description"
+      />
+      <input id="price" type="text" name="price" placeholder="Product Price" />
+      <button type="subtmit">Add</button>
+    </form>
+    <form id="removeForm">
+      <h2 class="title">Remove products</h2>
+      <input id="id" type="text" name="id" placeholder="Product ID" />
+      <button type="submit">Remove</button>
+    </form>
+  </div>
+
+  <h2 class="title">My products</h2>
+  <div id="productList">
+  </div>
+</section>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>

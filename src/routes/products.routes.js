@@ -14,24 +14,12 @@ import { generateUniqueId } from "../utils/generateUniqueId.js";
 const router = Router();
 const products = findFile("products");
 
-router.get("/name", (req, res) => {
-  const person = {
-    name: "Juan",
-  };
-
-  res.render("index", person);
-});
-
 router.get("/", (req, res) => {
   const { limit } = req.query;
 
   const productToSend = limit ? products.slice(0, limit) : products;
-  const person = {
-    name: "Juan",
-  };
 
-  res.render("index", person);
-  /*   res.status(200).json({ status: "success", payload: productToSend }); */
+  res.status(200).json({ status: "success", payload: productToSend });
 });
 
 router.get("/:id", checkProductExists, (req, res) => {

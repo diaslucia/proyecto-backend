@@ -1,45 +1,51 @@
 const socket = io();
 
-socket.emit("message", "Hola es un mensaje");
+const addForm = document.getElementById("addForm");
+const removeForm = document.getElementById("removeForm");
+const productsList = document.getElementById("productList");
 
-/* socket.on("individual", (data) => {
-  console.log(data);
-});
-socket.on("some", (data) => {
-  console.log(data);
-});
-socket.on("everybody", (data) => {
-  console.log(data);
-});
- */
-
-const form = document.getElementById("form");
-const productsList = document.getElementById("productsList");
-
-// Enviamos los productos
-form.onsubmit = (e) => {
+// Agregar productos
+addForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const title = e.target.elements.title.value;
-  socket.emit("product", title);
-};
+  const title = document.getElementById("title").value;
+  const price = document.getElementById("price").value;
+  const description = document.getElementById("description").value;
 
-// Escuchamos la respuesta
-socket.on("product", (data) => {
+  await fetch("/realtimeproducts", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ title, price, description }),
+  });
+
+  addForm.reset();
+});
+
+// Sacar productos
+removeForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const id = document.getElementById("id").value;
+
+  await fetch("/realtimeproducts", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ id }),
+  });
+
+  removeForm.reset();
+});
+
+// Mostrar productos
+socket.on("products", (data) => {
   productsList.innerHTML = "";
 
   data.forEach((prod, index) => {
-    const div = document.createElement("div");
-    div.className.add("card");
-    div.innerHTML = `<p>Produto: ${prod.title}</p>`;
-    productsList.append(div);
-
-    const btn = document.createElement("button");
-    btn.className.add("btn");
-    btn.innerText = "Buy";
-    btn.onclick = () => {
-      data[index].stock--;
-      socket.emit("updateStock", data);
-    };
-    div.append(btn);
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.innerHTML = `<p><b>Title:</b> ${prod.title}</p> <p><b>Description:</b> ${prod.description}</p> <p><b>Price:</b> $${prod.price}</p>`;
+    productsList.appendChild(card);
   });
 });

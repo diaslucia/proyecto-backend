@@ -43,3 +43,5 @@ The file structure is:
 - routes: to store all different routes for endpoints.
 - data: to store jsons with information.
 - utils: to store reusable functions and helpers.
+- views: to store handlebars.
+- public: to store styles and js used to manage handlebars.
