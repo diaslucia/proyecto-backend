@@ -45,7 +45,7 @@ socket.on("products", (data) => {
   data.forEach((prod, index) => {
     const card = document.createElement("div");
     card.classList.add("card");
-    card.innerHTML = `<p><b>Title:</b> ${prod.title}</p> <p><b>Description:</b> ${prod.description}</p> <p><b>Price:</b> $${prod.price}</p>`;
+    card.innerHTML = `<p><b>Title:</b> ${prod.title}</p> <p><b>Description:</b> ${prod.description}</p> <p><b>Price:</b> $${prod.price}</p> <p><b>ID:</b> ${prod.id}</p>`;
     productsList.appendChild(card);
   });
 });
