@@ -1,80 +1,89 @@
 import { Router } from "express";
-import {
-  findFile,
-  findById,
-  writeFile,
-  findByIndex,
-} from "../utils/helpers.js";
-// middlewares
+import productDao from "../dao/mongoDB/products.dao.js";
+import { checkProductExists } from "../middleware/checkProductExists.middleware.js";
 import { checkProductPut } from "../middleware/checkProductPut.middleware.js";
 import { checkProductPost } from "../middleware/checkProductPost.middleware.js";
-import { checkProductExists } from "../middleware/checkProductExists.middleware.js";
-import { generateUniqueId } from "../utils/generateUniqueId.js";
 
 const router = Router();
-const products = findFile("products");
 
-router.get("/", (req, res) => {
-  const { limit } = req.query;
+router.get("/", async (req, res) => {
+  try {
+    const { limit, page, sort, category } = req.query;
+    let products;
 
-  const productToSend = limit ? products.slice(0, limit) : products;
+    const options = {
+      limit: limit || 10,
+      page: page || 1,
+      sort: {
+        price: sort === "asc" ? 1 : -1,
+      },
+      learn: true,
+    };
 
-  res.status(200).json({ status: "success", payload: productToSend });
+    if (category) {
+      products = await productDao.getAll({ category }, options);
+    }
+
+    products = await productDao.getAll({}, options);
+    res.status(200).json({ status: "Success", data: products });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ status: "Error", message: "Internal server error" });
+  }
 });
 
-router.get("/:id", checkProductExists, (req, res) => {
-  const { id } = req.params;
+router.get("/:pId", checkProductExists, async (req, res) => {
+  try {
+    const { pId } = req.params;
+    const product = await productDao.getById(pId);
 
-  const findProduct = findById(products, id);
-
-  res.status(200).json({ status: "success", payload: findProduct });
+    res.status(200).json({ status: "success", data: product });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ status: "Error", message: "Internal server error" });
+  }
 });
 
-router.post("/", checkProductPost, (req, res) => {
-  const product = req.body;
+router.post("/", checkProductPost, async (req, res) => {
+  try {
+    const productData = req.body;
+    const product = await productDao.create(productData);
 
-  // Status es true por default
-  const newProducts = [
-    ...products,
-    { ...product, status: product.status || true, id: generateUniqueId() },
-  ];
-
-  writeFile("products", newProducts);
-
-  res.status(200).json({
-    status: "success",
-    message: "Product added successfully",
-    payload: newProducts,
-  });
+    res.status(201).json({ status: "success", data: product });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ status: "Error", message: "Internal server error" });
+  }
 });
 
-router.put("/:id", checkProductExists, checkProductPut, (req, res) => {
-  const { id } = req.params;
-  const productData = req.body;
+router.put("/:pId", checkProductExists, checkProductPut, async (req, res) => {
+  try {
+    const { pId } = req.params;
+    const productData = req.body;
 
-  const productIndex = findByIndex(products, id);
-  const newProducts = products;
-  newProducts[productIndex] = {
-    ...newProducts[productIndex],
-    ...productData,
-  };
-  writeFile("products", newProducts);
+    const product = await productDao.update(pId, productData);
 
-  res
-    .status(200)
-    .json({ status: "success", message: "Product edited successfully" });
+    res.status(200).json({ status: "success", data: product });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ status: "Error", message: "Internal server error" });
+  }
 });
 
-router.delete("/:id", checkProductExists, (req, res) => {
-  const { id } = req.params;
+router.delete("/:pId", checkProductExists, async (req, res) => {
+  try {
+    const { pId } = req.params;
 
-  const findProduct = findById(products, id);
-  const newProducts = products.filter((i) => i.id != findProduct.id);
-  writeFile("products", newProducts);
+    const products = await productDao.deleteOne(pId);
 
-  res
-    .status(200)
-    .json({ status: "success", message: "Product deleted successfully" });
+    res.status(200).json({
+      status: "Success",
+      message: `Product with id ${pId} was deleted`,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ status: "Error", message: "Internal server error" });
+  }
 });
 
 export default router;

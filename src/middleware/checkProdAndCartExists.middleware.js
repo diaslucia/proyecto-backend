@@ -1,9 +1,13 @@
 import { request, response } from "express";
 import cartDao from "../dao/mongoDB/cart.dao.js";
 
-export const checkCartExists = async (req = request, res = response, next) => {
+export const checkProdAndCartExists = async (
+  req = request,
+  res = response,
+  next
+) => {
   try {
-    const { cId } = req.params;
+    const { cId, pId } = req.params;
 
     const findCart = await cartDao.getById(cId);
 
@@ -11,6 +15,14 @@ export const checkCartExists = async (req = request, res = response, next) => {
       return res
         .status(404)
         .json({ status: "Not found", message: "Cart not found" });
+
+    const findProduct = findCart.products.find((p) => (p.product = pId));
+
+    if (!findProduct) {
+      return res
+        .status(404)
+        .json({ status: "Not found", message: "Product not found in cart" });
+    }
 
     next();
   } catch (error) {

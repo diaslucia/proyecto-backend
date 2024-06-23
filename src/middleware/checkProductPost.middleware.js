@@ -1,31 +1,32 @@
 import { request, response } from "express";
 
-export const checkProductPost = (req = request, res = response, next) => {
-  const { description, code, price, status, stock, category } = req.body;
-  const errors = [];
+export const checkProductPost = async (req = request, res = response, next) => {
+  try {
+    const { description, code, price, stock, category } = req.body;
+    let errors = "";
 
-  if (!description) {
-    errors.push("El campo 'description' es obligatorio.");
-  }
-  if (!code) {
-    errors.push("El campo 'code' es obligatorio.");
-  }
-  if (typeof price !== "number" || price <= 0) {
-    errors.push("El campo 'price' debe ser un número positivo.");
-  }
-  if (typeof stock !== "number" || stock < 0) {
-    errors.push("El campo 'stock' debe ser un número entero no negativo.");
-  }
-  if (!category) {
-    errors.push("El campo 'category' es obligatorio.");
-  }
+    if (!description) {
+      errors = "Field 'description' is mandatory";
+    } else if (!code) {
+      errors = "Field 'code' is mandatory";
+    } else if (typeof price !== "number" || price <= 0) {
+      errors = "Field 'price' must be a positive number";
+    } else if (typeof stock !== "number" || stock < 0) {
+      errors = "Field 'stock' must be a whole no negative number";
+    } else if (!category) {
+      errors = "Field 'category' is mandatory";
+    }
 
-  if (errors.length > 0) {
-    return res.status(400).json({
-      status: "error",
-      payload: errors,
-    });
-  }
+    if (errors.length) {
+      return res.status(400).json({
+        status: "Bad request",
+        payload: errors,
+      });
+    }
 
-  next();
+    next();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: "Error", message: "Internal server error" });
+  }
 };
