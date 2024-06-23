@@ -1,5 +1,5 @@
 import { Router } from "express";
-import productDao from "../dao/mongoDB/products.dao.js";
+import productDao from "../dao/managers/products.dao.js";
 import { checkProductExists } from "../middleware/checkProductExists.middleware.js";
 import { checkProductPut } from "../middleware/checkProductPut.middleware.js";
 import { checkProductPost } from "../middleware/checkProductPost.middleware.js";

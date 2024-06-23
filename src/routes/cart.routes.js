@@ -1,5 +1,5 @@
 import { Router } from "express";
-import cartDao from "../dao/mongoDB/cart.dao.js";
+import cartDao from "../dao/managers/cart.dao.js";
 import { checkCartExists } from "../middleware/checkCartExists.middleware.js";
 import { checkProdAndCartExists } from "../middleware/checkProdAndCartExists.middleware.js";
 import { checkCartPost } from "../middleware/checkCartPost.middleware.js";

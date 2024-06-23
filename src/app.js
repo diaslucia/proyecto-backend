@@ -3,7 +3,9 @@ import routes from "./routes/index.routes.js";
 import __dirname from "./dirname.js";
 import handlebars from "express-handlebars";
 import { Server } from "socket.io";
-import { connectMongoDB } from "./config/mongoDB.config.js";
+import { connectMongoDB } from "./dao/config/mongoDB.config.js";
+import viewsRoutes from "./routes/views.routes.js";
+import "dotenv/config";
 
 const app = express();
 const PORT = 8080;
@@ -20,6 +22,7 @@ app.set("view engine", "handlebars");
 app.use(express.static("public"));
 // Routes
 app.use("/api", routes);
+app.use("/", viewsRoutes);
 
 // Sockets
 const httpServer = app.listen(8080, () => {
