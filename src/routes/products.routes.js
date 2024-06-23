@@ -1,5 +1,6 @@
 import { Router } from "express";
 import productDao from "../dao/managers/products.dao.js";
+// Middlewares
 import { checkProductExists } from "../middleware/checkProductExists.middleware.js";
 import { checkProductPut } from "../middleware/checkProductPut.middleware.js";
 import { checkProductPost } from "../middleware/checkProductPost.middleware.js";
