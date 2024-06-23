@@ -43,7 +43,7 @@ The file structure is:
 
 - middleware: to store middleware used in routes to verify requests.
 - routes: to store all different routes for endpoints.
-- data: to store jsons with information.
-- utils: to store reusable functions and helpers.
 - views: to store handlebars.
 - public: to store styles and js used to manage handlebars.
+- dao/managers: to store mongoose data managers.
+- dao/models: to store mongoose data models.
